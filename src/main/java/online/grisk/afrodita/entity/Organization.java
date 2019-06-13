@@ -1,8 +1,5 @@
 package online.grisk.afrodita.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
@@ -12,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -26,21 +22,21 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(
-        name = "grisk_role",
+        name = "grisk_organization",
         catalog = "grisk",
         schema = "public",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"code"})
+                @UniqueConstraint(columnNames = {"rut"})
         })
-public class Role implements Serializable {
+public class Organization implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_role", nullable = false)
-    private Short idRole;
+    @Column(name = "id_organization", nullable = false)
+    private Long idOrganization;
 
     @Basic(optional = false)
     @NotNull
@@ -51,36 +47,36 @@ public class Role implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
-    @Column(name = "code", nullable = false, length = 2147483647)
-    private String code;
+    @Column(name = "rut", nullable = false, length = 2147483647)
+    private String rut;
 
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "roles")
-    private Collection<Module> modules;
-
-    @JsonBackReference
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "role")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organization")
     private Collection<User> users;
 
-    public Role() {
+    public Organization() {
     }
 
-    public Role(Short idRole) {
-        this.idRole = idRole;
+    public Organization(Long idOrganization) {
+        this.idOrganization = idOrganization;
     }
 
-    public Role(Short idRole, String name, String code) {
-        this.idRole = idRole;
+    public Organization(@NotNull @Size(min = 1, max = 2147483647) String name, @NotNull @Size(min = 1, max = 2147483647) String rut) {
         this.name = name;
-        this.code = code;
+        this.rut = rut;
     }
 
-    public Short getIdRole() {
-        return idRole;
+    public Organization(@NotNull @Size(min = 1, max = 2147483647) String name, @NotNull @Size(min = 1, max = 2147483647) String rut, Collection<User> users) {
+        this.name = name;
+        this.rut = rut;
+        this.users = users;
     }
 
-    public void setIdRole(Short idRole) {
-        this.idRole = idRole;
+    public Long getIdOrganization() {
+        return idOrganization;
+    }
+
+    public void setIdOrganization(Long idOrganization) {
+        this.idOrganization = idOrganization;
     }
 
     public String getName() {
@@ -91,20 +87,12 @@ public class Role implements Serializable {
         this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public String getRut() {
+        return rut;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Collection<Module> getModules() {
-        return modules;
-    }
-
-    public void setModules(Collection<Module> modules) {
-        this.modules = modules;
+    public void setRut(String rut) {
+        this.rut = rut;
     }
 
     public Collection<User> getUsers() {

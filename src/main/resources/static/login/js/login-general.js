@@ -133,60 +133,57 @@ var KTLoginGeneral = function () {
                 return;
             }
 
-            // btn.addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
+            btn.addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
 
 
 
-            var enterprise = {}
-            enterprise["name"] = $("#kt-login__signup-nombre_empresa").val();
-            enterprise["rut"] = $("#kt-login__signup-rut_empresa").val();
+            var organization = {}
+            organization["name"] = $("#kt-login__signup-name_organization").val();
+            organization["rut"] = $("#kt-login__signup-rut_organization").val();
+
             var usuario = {}
             usuario["username"] = $("#kt-login__signup-username").val();
-            usuario["empresa"] = enterprise;
+            usuario["email"] = $("#kt-login__signup-email").val();
+            usuario["pass"] = $("#kt-login__signup-password").val();
+            usuario["organization"] = organization;
 
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                url: "/testAjax",
-                data: JSON.stringify(usuario),
-                dataType: 'json',
-                cache: false,
-                timeout: 600000,
-                success: function (data) {
-                    alert('hola soy el ajax funcionando')
-                }
-            });
+           $.ajax({
+               type: "POST",
+               contentType: "application/json",
+               url: "/api/created-user-admin-by-login",
+               data: JSON.stringify(usuario),
+               dataType: 'json',
+               cache: false,
+               timeout: 600000,
+               success: function (data) {
+                   btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                   form.clearForm();
+                   form.validate().resetForm();
 
+                   // display signup form
+                   displaySignInForm();
+                   var signInForm = login.find('.kt-login__signin form');
+                   signInForm.clearForm();
+                   signInForm.validate().resetForm();
 
-            /*form.ajaxSubmit({
-                url: '/testAjax',
-                type: 'post',
-                datatype: 'json',
-                data: {
-                    'username': $('#kt-login__signup-username')[0].value,
-                    'email': $('#kt-login__signup-email')[0].value,
-                    'password': $('#kt-login__signup-password')[0].value,
-                    'rpassword': $('#kt-login__signup-rpassword')[0].value,
-                    'rut_empresa': $('#kt-login__signup-rut_empresa')[0].value,
-                    'nommbre_empresa': $('#kt-login__signup-nombre_empresa')[0].value,
-                },
-                success: function (response, status, xhr, $form) {
-                    // similate 2s delay
-                    setTimeout(function () {
-                        btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
-                        form.clearForm();
-                        form.validate().resetForm();
+                   showErrorMsg(signInForm, 'success', 'Muchas gracias! Las instrucciones para completar tu registro han sido enviado a tu correo.');
 
-                        // display signup form
-                        displaySignInForm();
-                        var signInForm = login.find('.kt-login__signin form');
-                        signInForm.clearForm();
-                        signInForm.validate().resetForm();
+               },
+               error: function (data) {
+                   btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                   form.clearForm();
+                   form.validate().resetForm();
 
-                        showErrorMsg(signInForm, 'success', 'Muchas gracias. Para completar tu registro por favor confirma tu correo.');
-                    }, 2000);
-                }
-            });*/
+                   // display signup form
+                   displaySignInForm();
+                   var signInForm = login.find('.kt-login__signin form');
+                   signInForm.clearForm();
+                   signInForm.validate().resetForm();
+
+                   showErrorMsg(signInForm, 'danger', 'Ha ocurrido un problema al realizar el registro, por favor intente nuevamente mas tarde. Si el problema persiste comuníquese con el administrador del sistema.');
+
+               }
+           });
         });
     }
 

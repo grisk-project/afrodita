@@ -1,51 +1,53 @@
 package online.grisk.afrodita.restcontroller;
 
-import online.grisk.afrodita.dto.EnterpriseDTO;
-import online.grisk.afrodita.dto.UserDTO;
-import online.grisk.afrodita.entity.Enterprise;
+import online.grisk.afrodita.estrategy.Estrategy;
+import online.grisk.afrodita.estrategy.impl.CreatedUserAdminByLogin;
+import online.grisk.afrodita.model.OrganizationModel;
+import online.grisk.afrodita.model.UserModel;
+import online.grisk.afrodita.entity.Organization;
 import online.grisk.afrodita.entity.Role;
 import online.grisk.afrodita.entity.User;
-import online.grisk.afrodita.response.ResponseRestAPI;
-import online.grisk.afrodita.service.EnterpriseService;
+import online.grisk.afrodita.dto.ResponseRestAPI;
+import online.grisk.afrodita.processor.Processor;
+import online.grisk.afrodita.service.OrganizationService;
 import online.grisk.afrodita.service.RoleService;
 import online.grisk.afrodita.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @RestController
 public class UserRestController {
 
-	@Autowired
-	UserService userService;
+    @Autowired
+    Processor userProcessor;
+    
+    @Autowired
+    Estrategy createdUserAdminByLogin;
 
-	@Autowired
-	EnterpriseService enterpriseService;
-
-	@Autowired
-	RoleService roleService;
-	
-	@PostMapping(value = "/api/users")
-    public ResponseEntity<Object> login(@Valid @RequestBody UserDTO usuario, Errors errors) {
-        Role role = roleService.findByCode("ADMIN");
-        EnterpriseDTO presentedEnterprise = usuario.getEnterprise();
-        Enterprise existedEnterprise = enterpriseService.findByRut(presentedEnterprise.getRut());
-        if (existedEnterprise == null){
-            existedEnterprise = enterpriseService.save(new Enterprise(presentedEnterprise.getRut(), presentedEnterprise.getName()));
+	@PostMapping(value = "/api/created-user-admin-by-login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserModel usuario, Errors errors) {
+        if(errors.hasErrors()) {
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
-        User user = null;
-        if(userService.findByUsername(usuario.getUsername())== null && userService.findByEmail(usuario.getEmail())== null){
-        	user = userService.save(new User(usuario.getUsername(),usuario.getEmail(), usuario.getPass(), false, true, 0, new Date(), new Date(), existedEnterprise, role));
-        }        
-        return new ResponseEntity<Object>(new ResponseRestAPI(HttpStatus.OK, HttpStatus.OK.toString(), "Recurso creado", new Date(), user), HttpStatus.OK);
+        return userProcessor.run(usuario, createdUserAdminByLogin);
     }
+
+    /*@Autowired
+    private RestTemplate restTemplate;
+
+    @GetMapping(value = "/api/test-eureka")
+    public ResponseEntity<?> test() {
+        final Object forObject = restTemplate.getForObject("http://atenea/users", Object.class);
+        return null;
+    }*/
 }

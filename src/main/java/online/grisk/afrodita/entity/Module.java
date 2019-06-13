@@ -1,65 +1,73 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package online.grisk.afrodita.entity;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * @author pablo
+ * @author Pablo Rios
+ * @email pa.riosramirez@gmail.com
  */
+
 @Entity
 @Table(name = "grisk_module", catalog = "grisk", schema = "public")
-@XmlRootElement
-@NamedQueries({
-        @NamedQuery(name = "Module.findAll", query = "SELECT m FROM Module m")
-        , @NamedQuery(name = "Module.findByIdModule", query = "SELECT m FROM Module m WHERE m.idModule = :idModule")
-        , @NamedQuery(name = "Module.findByDisplay", query = "SELECT m FROM Module m WHERE m.display = :display")
-        , @NamedQuery(name = "Module.findByIcon", query = "SELECT m FROM Module m WHERE m.icon = :icon")
-        , @NamedQuery(name = "Module.findByUri", query = "SELECT m FROM Module m WHERE m.uri = :uri")
-        , @NamedQuery(name = "Module.findByDisplayOrder", query = "SELECT m FROM Module m WHERE m.displayOrder = :displayOrder")})
 public class Module implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id_module", nullable = false)
     private Short idModule;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
     @Column(name = "display", nullable = false, length = 2147483647)
     private String display;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
     @Column(name = "icon", nullable = false, length = 2147483647)
     private String icon;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "display_order", nullable = false)
     private short displayOrder;
-    @JoinTable(name = "role_has_module", joinColumns = {
-            @JoinColumn(name = "module", referencedColumnName = "id_module", nullable = false)}, inverseJoinColumns = {
-            @JoinColumn(name = "role", referencedColumnName = "id_role", nullable = false)})
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roleCollection;
 
+    @Size(max = 2147483647)
+    @Column(name = "uri", length = 2147483647)
+    private String uri;
+
+    @JsonBackReference
+    @JoinTable(name = "role_has_module", joinColumns = {
+        @JoinColumn(name = "module", referencedColumnName = "id_module", nullable = false)}, inverseJoinColumns = {
+        @JoinColumn(name = "role", referencedColumnName = "id_role", nullable = false)})
+    @ManyToMany
+    private Collection<Role> roles;
+
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "module")
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private Collection<Endpoint> endpointCollection;
+    private Collection<Endpoint> endpoints;
 
     public Module() {
     }
@@ -68,19 +76,21 @@ public class Module implements Serializable {
         this.idModule = idModule;
     }
 
-    public Module(Short idModule, String display, String icon, short displayOrder) {
-        this.idModule = idModule;
+    public Module(@NotNull @Size(min = 1, max = 2147483647) String display, @NotNull @Size(min = 1, max = 2147483647) String icon, @NotNull short displayOrder, @Size(max = 2147483647) String uri, Collection<Role> roles, Collection<Endpoint> endpoints) {
         this.display = display;
         this.icon = icon;
         this.displayOrder = displayOrder;
+        this.uri = uri;
+        this.roles = roles;
+        this.endpoints = endpoints;
     }
 
     public Short getIdModule() {
         return idModule;
     }
 
-    public void setIdModule(Short idModule) {
-        this.idModule = idModule;
+    public void setIdModule(Short id) {
+        this.idModule = id;
     }
 
     public String getDisplay() {
@@ -107,42 +117,6 @@ public class Module implements Serializable {
         this.displayOrder = displayOrder;
     }
 
-    @XmlTransient
-    public Collection<Role> getRoleCollection() {
-        return roleCollection;
-    }
-
-    public void setRoleCollection(Collection<Role> roleCollection) {
-        this.roleCollection = roleCollection;
-    }
-
-    public Collection<Endpoint> getEndpointCollection() {
-        return endpointCollection;
-    }
-
-    public void setEndpointCollection(Collection<Endpoint> endpointCollection) {
-        this.endpointCollection = endpointCollection;
-    }
-
-    @Override
-    public String toString() {
-        return "Module{" +
-                "idModule=" + idModule +
-                ", display='" + display + '\'' +
-                ", icon='" + icon + '\'' +
-                ", displayOrder=" + displayOrder +
-                ", roleCollection=" + roleCollection.toString() +
-                ", endpointCollection=" + endpointCollection.toString() +
-                ", uri='" + uri + '\'' +
-                '}';
-    }
-
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2147483647)
-    @Column(name = "uri", nullable = false, length = 2147483647)
-    private String uri;
-
     public String getUri() {
         return uri;
     }
@@ -151,4 +125,19 @@ public class Module implements Serializable {
         this.uri = uri;
     }
 
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Collection<Endpoint> getEndpoints() {
+        return endpoints;
+    }
+
+    public void setEndpoints(Collection<Endpoint> endpoints) {
+        this.endpoints = endpoints;
+    }
 }

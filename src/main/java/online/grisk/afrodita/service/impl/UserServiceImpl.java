@@ -1,11 +1,10 @@
 package online.grisk.afrodita.service.impl;
 
-import online.grisk.afrodita.entity.Enterprise;
+import online.grisk.afrodita.entity.User;
+import online.grisk.afrodita.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import online.grisk.afrodita.entity.User;
-import online.grisk.afrodita.repository.UserRepository;
 import online.grisk.afrodita.service.UserService;
 
 @Service

@@ -7,4 +7,4 @@ spring:
       label:  development
       profile:  development
 server:
-  port: 8090
+  port: 80

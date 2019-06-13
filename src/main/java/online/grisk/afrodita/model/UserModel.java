@@ -1,11 +1,10 @@
-package online.grisk.afrodita.dto;
+package online.grisk.afrodita.model;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class UserDTO {
+public class UserModel {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 2147483647)
@@ -23,12 +22,7 @@ public class UserDTO {
 
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 2147483647)
-    private String trypass;
-
-    @Basic(optional = false)
-    @NotNull
-    private EnterpriseDTO enterprise;
+    private OrganizationModel organization;
 
     public String getUsername() {
         return username;
@@ -54,19 +48,11 @@ public class UserDTO {
         this.pass = pass;
     }
 
-    public String getTrypass() {
-        return trypass;
+    public OrganizationModel getOrganization() {
+        return organization;
     }
 
-    public void setTrypass(String trypass) {
-        this.trypass = trypass;
-    }
-
-    public EnterpriseDTO getEnterprise() {
-        return enterprise;
-    }
-
-    public void setEnterprise(EnterpriseDTO enterprise) {
-        this.enterprise = enterprise;
+    public void setEnterprise(OrganizationModel organization) {
+        this.organization = organization;
     }
 }
