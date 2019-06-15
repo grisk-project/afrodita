@@ -1,6 +1,6 @@
 package online.grisk.afrodita.utils;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public final class Constant {
 
@@ -10,4 +10,8 @@ public final class Constant {
     private Constant() {
     }
 
+    public static String encryte(String key) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(key);
+    }
 }

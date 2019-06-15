@@ -136,7 +136,6 @@ var KTLoginGeneral = function () {
             btn.addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
 
 
-
             var organization = {}
             organization["name"] = $("#kt-login__signup-name_organization").val();
             organization["rut"] = $("#kt-login__signup-rut_organization").val();
@@ -147,43 +146,46 @@ var KTLoginGeneral = function () {
             usuario["pass"] = $("#kt-login__signup-password").val();
             usuario["organization"] = organization;
 
-           $.ajax({
-               type: "POST",
-               contentType: "application/json",
-               url: "/api/created-user-admin-by-login",
-               data: JSON.stringify(usuario),
-               dataType: 'json',
-               cache: false,
-               timeout: 600000,
-               success: function (data) {
-                   btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
-                   form.clearForm();
-                   form.validate().resetForm();
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: "/v1/rest/user/created-admin-by-login",
+                data: JSON.stringify(usuario),
+                dataType: 'json',
+                cache: false,
+                timeout: 600000,
+                success: function (data, textStatus, jqXHR) {
+                    btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                    form.clearForm();
+                    form.validate().resetForm();
 
-                   // display signup form
-                   displaySignInForm();
-                   var signInForm = login.find('.kt-login__signin form');
-                   signInForm.clearForm();
-                   signInForm.validate().resetForm();
+                    displaySignInForm();
+                    var signInForm = login.find('.kt-login__signin form');
+                    signInForm.clearForm();
+                    signInForm.validate().resetForm();
 
-                   showErrorMsg(signInForm, 'success', 'Muchas gracias! Las instrucciones para completar tu registro han sido enviado a tu correo.');
+                    showErrorMsg(signInForm, 'success', 'Muchas gracias! Las instrucciones para completar tu registro han sido enviado a tu correo.');
+                    console.log(data);
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                    form.clearForm();
+                    form.validate().resetForm();
 
-               },
-               error: function (data) {
-                   btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
-                   form.clearForm();
-                   form.validate().resetForm();
+                    // display signup form
+                    displaySignInForm();
+                    var signInForm = login.find('.kt-login__signin form');
+                    signInForm.clearForm();
+                    signInForm.validate().resetForm();
 
-                   // display signup form
-                   displaySignInForm();
-                   var signInForm = login.find('.kt-login__signin form');
-                   signInForm.clearForm();
-                   signInForm.validate().resetForm();
-
-                   showErrorMsg(signInForm, 'danger', 'Ha ocurrido un problema al realizar el registro, por favor intente nuevamente mas tarde. Si el problema persiste comuníquese con el administrador del sistema.');
-
-               }
-           });
+                    showErrorMsg(signInForm, 'danger', 'Ha ocurrido un problema al realizar el registro, por favor intente nuevamente mas tarde. Si el problema persiste comuníquese con el administrador del sistema.');
+                    console.log(errorThrown);
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                }
+            });
         });
     }
 
@@ -209,8 +211,49 @@ var KTLoginGeneral = function () {
 
             btn.addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
 
+            $.ajax({
+                type: "POST",
+                contentType: "application/json",
+                url: '/v1/rest/user/reset-pass-by-login',
+                data: $("#kt-login__forgot-email").val(),
+                dataType: 'json',
+                cache: false,
+                timeout: 600000,
+                success: function (data, textStatus, jqXHR) {
+                    btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                    form.clearForm();
+                    form.validate().resetForm();
+
+                    displaySignInForm();
+                    var signInForm = login.find('.kt-login__signin form');
+                    signInForm.clearForm();
+                    signInForm.validate().resetForm();
+
+                    showErrorMsg(signInForm, 'success', 'Genial! Las instrucciones de recuperación de contraseña han sido enviado a tu correo.');
+                    console.log(data);
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                    form.clearForm();
+                    form.validate().resetForm();
+
+                    // display signup form
+                    displaySignInForm();
+                    var signInForm = login.find('.kt-login__signin form');
+                    signInForm.clearForm();
+                    signInForm.validate().resetForm();
+
+                    showErrorMsg(signInForm, 'danger', 'Ha ocurrido un problema al realizar el registro, por favor intente nuevamente mas tarde. Si el problema persiste comuníquese con el administrador del sistema.');
+                    console.log(errorThrown);
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                }
+            });
+
             form.ajaxSubmit({
-                url: '',
+                url: '/v1/rest/user/reset-pass-by-login',
                 success: function (response, status, xhr, $form) {
                     // similate 2s delay
                     setTimeout(function () {

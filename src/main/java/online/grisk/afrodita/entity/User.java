@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
         schema = "public",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"username"}),
-                @UniqueConstraint(columnNames = {"username", "email"})
+                @UniqueConstraint(columnNames = {"username", "email", "token_restart", "token_confirm"})
         })
 public class User implements Serializable {
 
@@ -68,6 +68,12 @@ public class User implements Serializable {
     @Size(min = 1, max = 2147483647)
     @Column(name = "pass", nullable = false, length = 2147483647)
     private String pass;
+
+    @Column(name = "token_restart")
+    private String tokenRestart;
+
+    @Column(name = "token_confirm")
+    private String tokenConfirm;
 
     @Basic(optional = false)
     @NotNull
@@ -111,6 +117,8 @@ public class User implements Serializable {
     public User(@NotNull @Size(min = 1, max = 2147483647) String username,
                 @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Correo electrónico no válido") @NotNull @Size(min = 1, max = 2147483647) String email,
                 @NotNull @Size(min = 1, max = 2147483647) String pass,
+                String tokenRestart,
+                String tokenConfirm,
                 @NotNull boolean enabled,
                 @NotNull boolean nonLocked,
                 @NotNull short attempt,
@@ -120,13 +128,15 @@ public class User implements Serializable {
                 Role role) {
         this.username = username;
         this.email = email;
-        this.organization = organization;
         this.pass = pass;
+        this.tokenRestart = tokenRestart;
+        this.tokenConfirm = tokenConfirm;
         this.enabled = enabled;
         this.nonLocked = nonLocked;
         this.attempt = attempt;
         this.createAt = createAt;
         this.updateAt = updateAt;
+        this.organization = organization;
         this.role = role;
     }
 
@@ -162,7 +172,23 @@ public class User implements Serializable {
         this.pass = pass;
     }
 
-    public boolean getEnabled() {
+    public String getTokenRestart() {
+        return tokenRestart;
+    }
+
+    public void setTokenRestart(String tokenRestart) {
+        this.tokenRestart = tokenRestart;
+    }
+
+    public String getTokenConfirm() {
+        return tokenConfirm;
+    }
+
+    public void setTokenConfirm(String tokenConfirm) {
+        this.tokenConfirm = tokenConfirm;
+    }
+
+    public boolean isEnabled() {
         return enabled;
     }
 
@@ -170,7 +196,7 @@ public class User implements Serializable {
         this.enabled = enabled;
     }
 
-    public boolean getNonLocked() {
+    public boolean isNonLocked() {
         return nonLocked;
     }
 

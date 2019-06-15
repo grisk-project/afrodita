@@ -301,7 +301,7 @@ jQuery.extend( {
 
 	ajaxSettings: {
 		url: location.href,
-		type: "GET",
+		type: "POST",
 		isLocal: rlocalProtocol.test( location.protocol ),
 		global: true,
 		processData: true,

@@ -220,7 +220,7 @@ License: You must have a valid license purchased only from themeforest(the above
                         </div>
                         <form class="kt-form" action="">
                             <div class="input-group">
-                                <input class="form-control" type="text" placeholder="Correo electrónico" name="email" id="kt_email"
+                                <input class="form-control" type="text" placeholder="Correo electrónico" name="email" id="kt-login__forgot-email"
                                        autocomplete="off">
                             </div>
                             <div class="kt-login__actions">
@@ -233,6 +233,26 @@ License: You must have a valid license purchased only from themeforest(the above
                             </div>
                         </form>
                     </div>
+                    <!--<div class="kt-login__postforgot">
+                        <div class="kt-login__head">
+                            <h3 class="kt-login__title">¿Olvidaste tu contraseña?</h3>
+                            <div class="kt-login__desc">Ingresa tu correo electrónico para restablecer su contraseña:</div>
+                        </div>
+                        <form class="kt-form" action="">
+                            <div class="input-group">
+                                <input class="form-control" type="text" placeholder="Correo electrónico" name="email" id="kt-login__postforgot-email"
+                                       autocomplete="off">
+                            </div>
+                            <div class="kt-login__actions">
+                                <button id="kt_login_postforgot_submit"
+                                        class="btn btn-brand btn-pill kt-login__btn-primary">Restablecer
+                                </button>&nbsp;&nbsp;
+                                <button id="kt_login_postforgot_cancel"
+                                        class="btn btn-secondary btn-pill kt-login__btn-secondary">Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>-->
                     <div class="kt-login__account">
 								<span class="kt-login__account-msg">
 									¿No tienes una cuenta?
@@ -357,13 +377,11 @@ License: You must have a valid license purchased only from themeforest(the above
 <!--begin::Page Scripts(used by this page) -->
 <script th:src="@{/login/js/login-general.js}" type="text/javascript"></script>
 
-<script th:if="${param.error != null and session['SPRING_SECURITY_LAST_EXCEPTION'].message !=null}" th:inline="javascript">
+<script th:if="${param.error != null and session != null and session['SPRING_SECURITY_LAST_EXCEPTION'] != null and session['SPRING_SECURITY_LAST_EXCEPTION'].message !=null}" th:inline="javascript">
     /*<![CDATA[*/
     var messageError = /*[[${session['SPRING_SECURITY_LAST_EXCEPTION'].message}]]*/ 'Ha ocurrido un error inesperado, por favor comuniquese con el administrador del sistema.';
     var login = $('#kt_login');
     var signInForm = login.find('.kt-login__signin form');
-    signInForm.clearForm();
-    signInForm.validate().resetForm();
     showErrorMsg(signInForm, 'danger', messageError);
     /*]]>*/
 </script>

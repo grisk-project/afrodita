@@ -22,4 +22,10 @@ public class UserServiceImpl implements UserService {
 	public User save(User user) {
 		return userRepository.save(user);
 	}
+	public User findByTokenConfirm(String tokenConfirm){
+		return userRepository.findByTokenConfirm(tokenConfirm);
+	}
+	public User findByTokenRestart(String tokenRestart){
+		return userRepository.findByTokenRestart(tokenRestart);
+	}
 }

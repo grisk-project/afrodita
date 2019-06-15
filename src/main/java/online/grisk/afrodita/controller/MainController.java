@@ -1,33 +1,59 @@
 package online.grisk.afrodita.controller;
 
-import java.security.Principal;
-
 import online.grisk.afrodita.controller.utils.ControllerUtils;
-import online.grisk.afrodita.service.impl.UserServiceImpl;
-
+import online.grisk.afrodita.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotBlank;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+import java.security.MessageDigest;
+import java.security.Principal;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class MainController {
 
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
 
     @RequestMapping(value = "/login", method = GET)
     public String loginPage(Model model) {
         model.addAttribute("title", "Login");
         return "login";
+    }
+
+    @RequestMapping(value = "/login/confirm/{token}", method = GET)
+    public String confirmUserByLogin(@NotBlank @PathVariable("token") String presentedToken, Model model) {
+        try {
+            model.addAttribute("title", "Login");
+            online.grisk.afrodita.entity.User userByToken = userService.findByTokenConfirm(presentedToken);
+            if (userByToken == null) {
+                return "redirect:/login?confirm=tokenfailed";
+            }
+            userByToken.setTokenConfirm(null);
+            userByToken.setEnabled(true);
+            userByToken.setAttempt((short) 0);
+            online.grisk.afrodita.entity.User user = userService.save(userByToken);
+            return "redirect:/login?confirm=success";
+        } catch (Exception e) {
+            return "redirect:/login?confirm=failed";
+        }
+    }
+
+    @RequestMapping(value = "/login/reset/{token}", method = GET)
+    public String resetPassByLogin(@NotBlank @PathVariable("token") String token, Model model) {
+        model.addAttribute("title", "Login");
+        return "redirect:/login?reset=success";
     }
 
     @RequestMapping(value = {"/", "/dashboard"}, method = GET)

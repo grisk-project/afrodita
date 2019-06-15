@@ -34,6 +34,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (role != null) {
             grantList.add(new SimpleGrantedAuthority("ROLE_" + role.getCode().toUpperCase()));
         }
-        return new User(user.getUsername(), user.getPass(), user.getEnabled(), user.getAttempt() <= 3, true, user.getNonLocked(), grantList);
+        return new User(user.getUsername(), user.getPass(), user.isEnabled(), user.getAttempt() <= 3, true, user.isNonLocked(), grantList);
     }
 }
